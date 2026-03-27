@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+    <title>Something from me...</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --pastel-pink: #ffd1dc;
+            --pastel-green: #d4f0f0; 
+            --pastel-blue: #aec6cf;
+            --text-dark: #4a4a4a;
+            --text-light: #7a7a7a;
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --heart-color: #ff6b81;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--pastel-pink) 0%, var(--pastel-green) 50%, var(--pastel-blue) 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; color: var(--text-dark); }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        button { cursor: pointer; font-family: inherit; outline: none; border: none; transition: all 0.3s ease; }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text-dark);
+            font-weight: 500;
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn:hover { background: rgba(255, 255, 255, 0.9); transform: translateY(-2px); }
+
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .hidden { display: none !important; }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2000;
+        }
+        .login-card { 
+            padding: 50px 30px; 
+            text-align: center; 
+            max-width: 400px; 
+            width: 92%; 
+            border-radius: 30px;
+        }
+        .login-display {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            background: transparent;
+            font-size: 2.5rem;
+            letter-spacing: 20px;
+            text-align: center;
+            color: var(--text-dark);
+            user-select: none;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pin-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 0 auto;
+            max-width: 280px;
+        }
+        .pin-btn {
+            width: 70px;
+            height: 70px;
+            margin: auto;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pin-btn:hover { background: rgba(255, 255, 255, 0.8); transform: scale(1.05); }
+        .pin-btn.backspace { font-size: 1.2rem; background: transparent; border: none; box-shadow: none; }
+        .pin-btn.empty { background: transparent; border: none; box-shadow: none; pointer-events: none; }
+        
+        #error { color: #ff4757; margin-top: 20px; font-size: 0.95rem; min-height: 20px; font-weight: 500; }
+
+        /* --- Floating Nav Bar --- */
+        nav {
+            margin: 20px auto;
+            padding: 8px 10px;
+            display: flex; 
+            justify-content: center; 
+            gap: 5px;
+            position: sticky; 
+            top: 20px; 
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50px;
+            width: max-content;
+            max-width: 95%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+        }
+        .nav-item {
+            background: transparent; 
+            font-weight: 500; 
+            font-size: 1rem; 
+            padding: 10px 20px;
+            color: var(--text-dark); 
+            border-radius: 40px;
+        }
+        .nav-item:hover { color: var(--heart-color); }
+        .nav-item.active { 
+            background: white; 
+            color: var(--heart-color);
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+
+        /* --- Logout Button --- */
+        .logout-btn {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 44px;
+            height: 44px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.1);
+            color: var(--heart-color);
+        }
+
+        /* --- Home --- */
+        .hero { text-align: center; padding: 40px 20px; margin-top: 20px; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; }
+        .counter-container { margin: 20px auto; max-width: 450px; padding: 20px; }
+        .counter-grid { display: flex; justify-content: center; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
+        .counter-item span { display: block; font-size: 1.6rem; font-weight: 600; color: var(--heart-color); }
+        .counter-item label { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; }
+
+        .gallery-container { width: 100%; overflow: hidden; padding: 20px 0; }
+        .gallery-scroll {
+            display: flex; gap: 30px; overflow-x: auto; padding: 20px 15vw;
+            scroll-snap-type: x mandatory; scrollbar-width: none;
+            align-items: center;
+        }
+        .gallery-scroll::-webkit-scrollbar { display: none; }
+        .gallery-card {
+            flex: 0 0 300px; 
+            scroll-snap-align: center; 
+            padding: 15px;
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0.5;
+            transform: scale(0.8);
+        }
+        .gallery-card.center-highlight { transform: scale(1.1); z-index: 2; opacity: 1; }
+        .card-img-wrapper {
+            width: 100%; 
+            height: 350px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            background: white; 
+            padding: 10px 10px 40px 10px;
+        }
+        .card-img-wrapper img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 2s ease; 
+        }
+        .card-img-wrapper img.developed { opacity: 1; }
+        .card-info { 
+            padding: 15px 5px 5px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .like-btn { 
+            background: rgba(255,255,255,0.7); 
+            border-radius: 20px; 
+            padding: 5px 15px; 
+            font-weight: 600; 
+            color: var(--heart-color); 
+        }
+        .card-message { 
+            margin-top: 10px; 
+            padding: 12px; 
+            background: rgba(255,255,255,0.6); 
+            border-radius: 10px; 
+            text-align: center; 
+            font-style: italic; 
+            display: none; 
+        }
+
+        /* --- Scrapbook Message Section --- */
+        .scrapbook-note-container {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px 80px;
+            width: 100%;
+        }
+        .scrapbook-note {
+            background: #fffef0; /* Old paper color */
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            transform: rotate(-1deg);
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Masking tape effect */
+        .scrapbook-note::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(2deg);
+            width: 120px;
+            height: 35px;
+            background: rgba(234, 226, 183, 0.6);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 2px solid rgba(0,0,0,0.02);
+            border-right: 2px solid rgba(0,0,0,0.02);
+        }
+        .scrapbook-note h2 {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .scrapbook-note p {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 1.8rem;
+            line-height: 1.4;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        .scrapbook-note .signature {
+            text-align: right;
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 1.8rem;
+            color: var(--heart-color);
+        }
+
+        /* --- Prizes & Scratch Cards --- */
+        .prizes-wrap { padding: 30px 20px 50px; }
+        .prizes-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;
+            margin-top: 30px; max-width: 900px; margin-left: auto; margin-right: auto;
+        }
+        .coupon {
+            width: 220px; height: 120px; position: relative; border-radius: 15px;
+            overflow: hidden; cursor: pointer; border: 3px dashed rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); background: rgba(255,255,255,0.8);
+            transition: transform 0.3s ease;
+        }
+        .coupon:hover { transform: translateY(-5px); }
+        .coupon-reveal {
+            position: absolute; inset: 0; display: flex; align-items: center;
+            justify-content: center; text-align: center; font-size: 1rem;
+            font-weight: 600; padding: 15px; color: var(--heart-color); z-index: 1;
+        }
+        .coupon-scratch { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; touch-action: none; cursor: grab; }
+
+        /* --- Claw Machine --- */
+        .claw-section { margin-top: 60px; display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; justify-items: center; }
+        .claw-machine {
+            width: min(100%, 520px); position: relative; overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.9); border-radius: 25px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 100%);
+        }
+        .claw-top { background: var(--heart-color); padding: 15px 20px; display: flex; align-items: center; justify-content: center; color: white; }
+        .claw-top h3 { margin: 0; font-size: 1.2rem; }
+        .claw-arena { padding: 20px; position: relative; height: 280px; }
+        .claw-car {
+            position: absolute; top: 0px; left: 50%; width: 44px; height: 30px;
+            transform: translateX(-50%); transition: left 0.4s ease, top 0.8s ease-in-out;
+            z-index: 3; background: #94a3b8; border-radius: 8px 8px 4px 4px; 
+        }
+        .claw-car::after {
+            content: "️𓆰𓆪"; position: absolute; top: 25px; left: 50%;
+            transform: translateX(-50%); font-size: 2.5rem; transition: top 0.8s ease;
+        }
+        .claw-line { position: absolute; top: 30px; left: 50%; width: 2px; height: 0; transform: translateX(-50%); background: #64748b; transition: height 0.8s ease; z-index: 2; }
+        .claw-bin {
+            position: absolute; bottom: 20px; left: 20px; right: 20px; height: 160px;
+            border-radius: 18px; background: rgba(255,255,255,0.4); border: 2px solid rgba(255,255,255,0.8);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px;
+        }
+        .toy { border-radius: 12px; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+        .claw-controls { display: flex; justify-content: center; gap: 20px; padding: 20px; background: rgba(255,255,255,0.5); }
+        .claw-action { 
+            padding: 10px 20px; border-radius: 50px; background: white; 
+            font-weight: 600; color: var(--text-dark); border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .claw-action:hover { background: var(--heart-color); color: white; }
+        .claw-machine.active .claw-line { height: 140px; }
+        .claw-machine.active .claw-car { top: 140px; }
+
+        .prize-capsule-wrap {
+            width: min(100%, 450px);
+            text-align: center;
+            perspective: 1000px;
+            margin-bottom: 50px;
+        }
+        .prize-capsule {
+            display: inline-block;
+            padding: 25px;
+            border-radius: 30px;
+            background: white;
+            border: 4px solid var(--pastel-pink);
+            box-shadow: 0 20px 40px rgba(255, 107, 129, 0.2);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .prize-capsule.revealed { transform: scale(1); opacity: 1; }
+        .prize-capsule.dare { border-color: #ffd700; box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2); }
+        .prize-capsule h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-light); margin-bottom: 10px; }
+        .prize-text { font-size: 1.6rem; font-weight: 600; color: var(--heart-color); font-family: 'Playfair Display', serif; }
+        .dare .prize-text { color: #8b8000; }
+
+        /* --- Playlist --- */
+        .playlist-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 30px; 
+            padding: 20px; 
+        }
+        .video-wrapper { 
+            position: relative; 
+            padding-bottom: 56.25%; 
+            height: 0; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            background: #000; 
+            margin-top: 15px; 
+        }
+        .video-wrapper iframe { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            border: 0; 
+        }
+        .custom-play-overlay { 
+            position: absolute; 
+            inset: 0; 
+            background: rgba(0,0,0,0.5); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 2; 
+            color: white; 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+        }
+
+        /* --- Timeline --- */
+        .timeline-wrapper { position: relative; padding: 50px 20px; max-width: 800px; margin: 0 auto; }
+        .timeline-line { position: absolute; left: 50%; width: 3px; height: 100%; background: white; transform: translateX(-50%); top: 0; }
+        .timeline-event { position: relative; display: flex; justify-content: center; margin: 60px 0; width: 100%; }
+        .timeline-dot { position: absolute; left: 50%; width: 18px; height: 18px; background: white; border-radius: 50%; transform: translateX(-50%); border: 3px solid var(--heart-color); z-index: 2; }
+        .timeline-content { width: 42%; padding: 20px; }
+        .timeline-event:nth-child(odd) .timeline-content { margin-right: auto; text-align: right; }
+        .timeline-event:nth-child(even) .timeline-content { margin-left: auto; text-align: left; }
+        .event-date { font-weight: 600; color: var(--heart-color); display: block; margin-bottom: 5px; font-size: 0.9rem; }
+
+        /* --- Reason Button --- */
+        .reason-box { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
+        .reason-heart { 
+            width: 60px; height: 60px; background: var(--heart-color); 
+            border-radius: 50%; display: flex; align-items: center; 
+            justify-content: center; color: white; font-size: 1.5rem; 
+            box-shadow: 0 4px 15px rgba(255,107,129,0.4); 
+        }
+        .reason-bubble { 
+            position: absolute; bottom: 75px; right: 0; width: 220px; 
+            padding: 18px; border-radius: 20px; transform-origin: bottom right; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            opacity: 0; pointer-events: none; transform: scale(0.5); text-align: center; 
+        }
+        .reason-bubble.active { opacity: 1; pointer-events: all; transform: scale(1); }
+
+        .memory-bubble {
+            position: fixed; bottom: -60px; background: rgba(255,255,255,0.6); 
+            border: 2px solid white; border-radius: 50%; overflow: hidden; 
+            z-index: 10; animation: floatUp 12s linear infinite; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .memory-bubble img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+        @keyframes floatUp { to { transform: translateY(-115vh) translateX(40px); opacity: 0; } }
+
+        .heart-pop { position: absolute; pointer-events: none; font-size: 1.5rem; z-index: 2000; animation: popUp 1s ease-out forwards; }
+        @keyframes popUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
+
+        @media (max-width: 768px) {
+            .timeline-line { left: 30px; }
+            .timeline-dot { left: 30px; }
+            .timeline-content { width: calc(100% - 70px); margin-left: 70px !important; text-align: left !important; }
+            .timeline-event:nth-child(even) .timeline-content { margin-left: 70px; }
+            .logout-btn { top: 15px; right: 15px; width: 38px; height: 38px; font-size: 1rem; }
+            .prize-text { font-size: 1.2rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .scrapbook-note p { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="glass">
+        <div class="login-card glass">
+            <h2>The Day We Confessed? ✨</h2>
+            <p style="margin-bottom: 25px; color: var(--text-light);">I hope you'll like it.</p>
+            <div id="pin-display" class="login-display">____</div>
+            <div class="pin-pad">
+                <button class="pin-btn" onclick="pressDigit('1')">1</button>
+                <button class="pin-btn" onclick="pressDigit('2')">2</button>
+                <button class="pin-btn" onclick="pressDigit('3')">3</button>
+                <button class="pin-btn" onclick="pressDigit('4')">4</button>
+                <button class="pin-btn" onclick="pressDigit('5')">5</button>
+                <button class="pin-btn" onclick="pressDigit('6')">6</button>
+                <button class="pin-btn" onclick="pressDigit('7')">7</button>
+                <button class="pin-btn" onclick="pressDigit('8')">8</button>
+                <button class="pin-btn" onclick="pressDigit('9')">9</button>
+                <button class="pin-btn empty"></button>
+                <button class="pin-btn" onclick="pressDigit('0')">0</button>
+                <button class="pin-btn backspace" onclick="backspacePin()">⌫</button>
+            </div>
+            <div id="error"></div>
+        </div>
+    </div>
+
+    <!-- Main App Content -->
+    <div id="app" class="hidden">
+        <button class="logout-btn" onclick="logout()" title="Lock app">🔒</button>
+
+        <nav>
+            <button class="nav-item active" id="nav-home" onclick="navTo('home')">🏡</button>
+            <button class="nav-item" id="nav-prizes" onclick="navTo('prizes')">🎪</button>
+            <button class="nav-item" id="nav-playlist" onclick="navTo('playlist')">🎶</button>
+        </nav>
+
+        <section id="home-sec" class="fade-in">
+            <div class="hero glass">
+                <h1 id="greet">Hello My pretty Babe!</h1>
+                <p> We've been together for</p>
+                <div class="counter-container glass">
+                    <div class="counter-grid">
+                        <div class="counter-item"><span id="d">0</span><label>Days</label></div>
+                        <div class="counter-item"><span id="h">0</span><label>Hrs</label></div>
+                        <div class="counter-item"><span id="m">0</span><label>Mins</label></div>
+                        <div class="counter-item"><span id="s">0</span><label>Secs</label></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-container">
+                <div class="gallery-scroll" id="galleryScroll">
+                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m1')"><img src="1st.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1516589174184-c6852657d803?w=400'"></div><div class="card-info"><h3>1st Year us.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m1" class="card-message">Kupalan pa talaga us nito HWHAHAH.</p></div>
+                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m2')"><img src="2nd.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>We became Bestfriends.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m2" class="card-message">Kupal sa isat isa na medyo magkakampi na us nito hwha.</p></div>
+                    
+                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m3')"><img src="3rd.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400'"></div><div class="card-info"><h3>Our 1st official date.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m3" class="card-message">Thank you for giving me the chance!</p></div>
+                                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m4')"><img src="4th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>Us celebrating your 22nd Bday!</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m4" class="card-message">ILYSM!</p></div>
+                                                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m5')"><img src="5th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>Outing with your fam.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m5" class="card-message">It's our 1st outing together.</p></div>
+                                                    
+                                                                        <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m6')"><img src="6th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400'"></div><div class="card-info"><h3>Cafe with u coz y not?.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m6" class="card-message">Super ganda mo!!!</p></div>
+                                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m7')"><img src="7th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>Under the same starry night.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m7" class="card-message">Our first low bud camping.</p></div>
+                                                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m8')"><img src="8th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>Overnight swimming with our friends.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m8" class="card-message">Both di pala us sanay lumangoy huhu T_T.</p></div>                                        <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m9')"><img src="9th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>Doing new things with you</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m9" class="card-message">Super cute nung sabi mo kakasal us jan in the future.</p></div>
+                                                    <div class="gallery-card glass"><div class="card-img-wrapper" onclick="toggleMsg('m10')"><img src="10th.jpeg" class="p-img" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83164ba?w=400'"></div><div class="card-info"><h3>After event.</h3><button class="like-btn" onclick="popHeart(event)">❤️</button></div><p id="m10" class="card-message">Kaw ha crush mo na pala ako nyan ha??!.</p></div>
+
+                </div>
+            </div>
+
+            <div class="scrapbook-note-container">
+                <div class="scrapbook-note">
+                    <h2>A little note for you...</h2>
+              <p>Hi babe! Sorry agad if macringe ka hwha , first of all I love you so much (yun na ata buong message eme) Thank you for the chance you've given me , i know kabado ka pa din and okay lang po kasi di ako magsasawa i assure ka</p><p>Super proud ako always sayo, wag na wag mo po iisipin na mag isa ka lang kasi andito na ako. I will help you in any way possible omki?  I'll do anything and everything just for you to feel loved. Worth it ka 🌷, deserve mo to be love genuinely, to be cared and everything nice.</p><p>I hope everything that you've been wishing for comes true ✨ kasi di lang naman yon for you. Magpahinga ka din babe paminsan minsan i know super pagod ka na po both Physical and mental. Kagaya po ng palagi ko sinasabi sayo you are more than enough sa lahat ng aspect mapa-kaklase, kaibigan, work-mate, partner lalong lalo na bilang anak 💗 </p><p>Nandito lang po ako always for you Yona ko. </p>. <iframe class="" src="" frameborder="0"></iframe>.</p>
+                    <div class="signature"> Your Cha 💞 </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="prizes-sec" class="hidden prizes-wrap">
+            <h2 style="text-align:center;">Scratchies for you.</h2>
+            <div class="prizes-grid">
+                <div class="coupon" data-reveal="A Big Warm Hug 🫂"><div class="coupon-reveal">A Big Warm Hug 🫂</div><canvas class="coupon-scratch"></canvas></div>
+                <div class="coupon" data-reveal="Movie Night 🍿"><div class="coupon-reveal">Movie Night 🍿</div><canvas class="coupon-scratch"></canvas></div>
+                <div class="coupon" data-reveal="Your Favorite Snack ✨"><div class="coupon-reveal">Your Favorite Snack ✨</div><canvas class="coupon-scratch"></canvas></div>
+            </div>
+            
+            <div class="claw-section">
+                <div class="claw-machine glass" id="clawMachine">
+                    <div class="claw-top"><h3>What should we do?</h3></div>
+                    <div class="claw-arena">
+                        <div class="claw-car" id="clawCar"></div><div class="claw-line" id="clawLine"></div>
+                        <div class="claw-bin">
+                            <div class="toy">🎁</div><div class="toy">🍡</div><div class="toy">🎀</div>
+                            <div class="toy">🍓</div><div class="toy">🍜</div><div class="toy">🧋</div>
+                        </div>
+                    </div>
+                    <div class="claw-controls">
+                        <button class="claw-action" onclick="moveClaw(-15)">◀ Left</button>
+                        <button class="claw-action" onclick="grabPrize()">Grab!</button>
+                        <button class="claw-action" onclick="moveClaw(15)">Right ▶</button>
+                    </div>
+                </div>
+                
+                <div class="prize-capsule-wrap">
+                    <div class="prize-capsule" id="prizeCapsule">
+                        <h4 id="prizeHeading">You won:</h4>
+                        <p class="prize-text" id="dateIdeaText">...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="playlist-sec" class="hidden">
+            <h2 style="text-align:center; margin-bottom:30px;">Songs that reminds me of you</h2>
+            <div class="playlist-grid">
+                <div class="song-card glass" style="padding: 20px;">
+                    <h3>Balisong</h3><p>Rico Blanco</p>
+                    <div class="video-wrapper">
+                        <div class="custom-play-overlay" onclick="playS('v1', 'https://www.youtube.com/embed/gVnn9OQ-zF0?autoplay=1&playsinline=1')">▶ Play</div>
+                        <iframe id="v1" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="song-card glass" style="padding: 20px;">
+                    <h3>Daylight</h3><p>Taylor Swift</p>
+                    <div class="video-wrapper">
+                        <div class="custom-play-overlay" onclick="playS('v2', 'https://www.youtube.com/embed/u9raS7-NisU?autoplay=1&playsinline=1')">▶ Play</div>
+                        <iframe id="v2" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="song-card glass" style="padding: 20px;">
+                    <h3>Slide Away</h3><p>Oasis</p>
+                    <div class="video-wrapper">
+                        <div class="custom-play-overlay" onclick="playS('v3', 'https://www.youtube.com/embed/X5QBFoDhaH4?autoplay=1&playsinline=1')">▶ Play</div>
+                        <iframe id="v3" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="story-sec" class="hidden">
+            <div class="timeline-wrapper">
+                <div class="timeline-line"></div>
+                <div class="timeline-event"><div class="timeline-dot"></div><div class="timeline-content glass"><span class="event-date">June 2024</span><h3>The First Meeting</h3><p>Where everything changed for the better.</p></div></div>
+                <div class="timeline-event"><div class="timeline-dot"></div><div class="timeline-content glass"><span class="event-date">Aug 2024</span><h3>Officially Us</h3><p>The day you made me the luckiest person.</p></div></div>
+                <div class="timeline-event"><div class="timeline-dot"></div><div class="timeline-content glass"><span class="event-date">Dec 2024</span><h3>Our First Trip</h3><p>A weekend I will never forget.</p></div></div>
+            </div>
+        </section>
+
+        <div class="reason-box">
+            <div id="rbub" class="reason-bubble glass"><p id="rtxt">Wait for it...</p></div>
+            <button class="reason-heart" onclick="showReason(event)">🩷</button>
+        </div>
+    </div>
+
+    <script>
+        let currentS = null;
+        let appInitialized = false;
+        let enteredPin = '';
+        let clawBusy = false;
+        let clawPos = 50;
+
+        function updatePinDisplay() {
+            const display = document.getElementById('pin-display');
+            display.innerText = enteredPin.length ? '•'.repeat(enteredPin.length).padEnd(4, '_') : '____';
+        }
+
+        function pressDigit(d) {
+            if (enteredPin.length >= 4) return;
+            enteredPin += d;
+            updatePinDisplay();
+            if (enteredPin.length === 4) setTimeout(checkAuth, 300);
+        }
+
+        function backspacePin() { enteredPin = enteredPin.slice(0, -1); updatePinDisplay(); }
+
+        function checkAuth() {
+            if (enteredPin === '0612') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                initApp();
+            } else {
+                document.getElementById('error').innerText = "Try again, love!";
+                enteredPin = ''; updatePinDisplay();
+            }
+        }
+
+        function logout() { location.reload(); }
+
+        function navTo(id) {
+            ['home','prizes','playlist','story'].forEach(s => {
+                const sec = document.getElementById(s+'-sec');
+                if (sec) sec.classList.add('hidden');
+                const nav = document.getElementById('nav-' + s);
+                if (nav) nav.classList.remove('active');
+            });
+            stopAllS();
+            document.getElementById(id+'-sec').classList.remove('hidden');
+            document.getElementById('nav-' + id).classList.add('active');
+            if (id === 'prizes') setTimeout(initScratchCards, 100);
+        }
+
+        function initApp() {
+            if (appInitialized) return;
+            appInitialized = true;
+            
+            const start = new Date('2025-12-06T00:00:00');
+            setInterval(() => {
+                const now = new Date();
+                const d = now - start;
+                const absDiff = Math.abs(d);
+                document.getElementById('d').innerText = Math.floor(absDiff / 864e5);
+                document.getElementById('h').innerText = Math.floor((absDiff % 864e5) / 36e5);
+                document.getElementById('m').innerText = Math.floor((absDiff % 36e5) / 6e4);
+                document.getElementById('s').innerText = Math.floor((absDiff % 6e4) / 1000);
+            }, 1000);
+
+            setInterval(makeBubble, 4000);
+
+            const galleryScroll = document.getElementById('galleryScroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('center-highlight');
+                    else entry.target.classList.remove('center-highlight');
+                });
+            }, { root: galleryScroll, threshold: 0.8 });
+
+            document.querySelectorAll('.gallery-card').forEach(card => observer.observe(card));
+
+            setTimeout(() => {
+                document.querySelectorAll('.p-img').forEach(i => i.classList.add('developed'));
+            }, 500);
+
+            window.addEventListener('click', () => {
+                document.getElementById('rbub').classList.remove('active');
+            });
+        }
+
+        function initScratchCards() {
+            document.querySelectorAll('.coupon').forEach(card => {
+                const canvas = card.querySelector('.coupon-scratch');
+                const ctx = canvas.getContext('2d');
+                canvas.width = card.offsetWidth; canvas.height = card.offsetHeight;
+                ctx.fillStyle = '#cbd5e1'; ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle = '#64748b'; ctx.font = '16px Poppins'; ctx.textAlign = 'center';
+                ctx.fillText('Scratch Me!', canvas.width/2, canvas.height/2+5);
+                
+                const scratch = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = ((e.clientX || (e.touches && e.touches[0].clientX)) - rect.left);
+                    const y = ((e.clientY || (e.touches && e.touches[0].clientY)) - rect.top);
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI*2); ctx.fill();
+                };
+                canvas.addEventListener('mousemove', (e) => { if(e.buttons === 1) scratch(e); });
+                canvas.addEventListener('touchmove', scratch);
+            });
+        }
+
+        function moveClaw(delta) {
+            if (clawBusy) return;
+            clawPos = Math.max(10, Math.min(90, clawPos + delta));
+            document.getElementById('clawCar').style.left = clawPos + '%';
+            document.getElementById('clawLine').style.left = clawPos + '%';
+        }
+
+        function grabPrize() {
+            if (clawBusy) return;
+            clawBusy = true;
+            const capsule = document.getElementById('prizeCapsule');
+            const heading = document.getElementById('prizeHeading');
+            const text = document.getElementById('dateIdeaText');
+            const line = document.getElementById('clawLine');
+            const car = document.getElementById('clawCar');
+            
+            capsule.classList.remove('revealed', 'dare');
+            line.style.height = '140px'; 
+            car.style.top = '140px';
+            
+            setTimeout(() => {
+                line.style.height = '0';
+                car.style.top = '0';
+                
+                setTimeout(() => {
+                    const isDare = Math.random() < 0.5;
+                    if (isDare) {
+                      const dares = [
+    "Darn! Missed it. Do a funny dance for him!",
+    "Claw slipped! Sing a song in a funny voice.",
+    "Empty claw! Tell your favorite joke right now.",
+    "Oops! Give him 50 kisses in 1 minute.",
+    "Missed! Act like a cat until he laughs.",
+    "Too slippery! Do a silly runway walk.",
+
+    "Try again! Hug him tight for 30 seconds 🤗",
+    "Missed! Say 3 things you love about him 💖",
+    "Oops! Give him a forehead kiss and say something sweet 😚",
+    "Claw failed! Recreate your favorite memory together 🎞️",
+    "So close! Call him by a super cheesy nickname for 1 minute 😆",
+    "Missed! Do your best impression of him 😂",
+    "Almost! Whisper something cute in his ear 🫣",
+    "No luck! Hold his hand and don’t let go for 1 minute 🫶",
+    "Oops! Give him 10 rapid kisses 💋",
+    "Claw slipped! Tell him why he’s special to you 💕",
+    "Missed! Act shy and confess to him like it’s your first time 🙈",
+    "Too bad! Let him pick a cute pose and recreate it together 📸",
+    "Empty claw! Say 'I love you' in 5 different ways 😌",
+    "Missed! Spin around then hug him immediately 🌀🤍",
+    "Oops! Do a dramatic love confession like in a movie 🎬",
+    "Claw failed! Let him boop your nose 🥹👉👃",
+    "So close! Give him a surprise kiss 😘",
+    "Missed! Compliment him nonstop for 30 seconds 💬💖"
+];
+                        heading.innerText = "CHALLENGE!";
+                        text.innerText = dares[Math.floor(Math.random() * dares.length)];
+                        capsule.classList.add('revealed', 'dare');
+                    } else {
+const ideas = [
+    "Cook a meal together 🍳",
+    "Watch a movie marathon at home 🎬",
+    "Play mobile or board games 🎮",
+    "Do a mini photoshoot together 📸",
+    "Go for a short walk outside 🚶‍♂️",
+    "Buy snacks and have a chill food trip 🍟",
+    "Listen to music and just vibe 🎧",
+    "Clean and organize something together 🧹",
+    "Try a new café or street food nearby ☕",
+    "Have a random deep talk session 💬",
+    "Ask him to do anything you want for you."
+];
+                        heading.innerText = "YOU WON:";
+                        text.innerText = ideas[Math.floor(Math.random() * ideas.length)];
+                        capsule.classList.add('revealed');
+                    }
+                    clawBusy = false;
+                }, 800);
+            }, 1000);
+        }
+
+        function toggleMsg(id) {
+            const e = document.getElementById(id);
+            e.style.display = e.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function popHeart(e) {
+            const h = document.createElement('div');
+            h.className = 'heart-pop'; h.innerText = '❤️';
+            const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0));
+            const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0));
+            h.style.left = x + 'px'; h.style.top = y + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 1000);
+        }
+
+        function makeBubble() {
+            const b = document.createElement('div');
+            b.className = 'memory-bubble';
+            const sz = 50 + Math.random()*30;
+            b.style.width = sz+'px'; b.style.height = sz+'px';
+            b.style.left = Math.random()*90+'vw';
+            b.innerHTML = `<span style="font-size:${sz/2}px"></span>`;
+            b.onclick = (e) => { popHeart(e); b.remove(); };
+            document.body.appendChild(b);
+            setTimeout(() => b.remove(), 12000);
+        }
+
+        function showReason(e) {
+            e.stopPropagation();
+            const r = ["Your golden heart.", "How you handle me.", "Your beautiful laugh.", "You feel like home.", "Your endless kindness.", "How you look at me.", "Your support always."];
+            const b = document.getElementById('rbub');
+            document.getElementById('rtxt').innerText = r[Math.floor(Math.random()*r.length)];
+            b.classList.toggle('active');
+        }
+
+        function playS(id, url) { 
+            stopAllS(); 
+            const ifr = document.getElementById(id); 
+            ifr.src = url; 
+            ifr.previousElementSibling.style.display = 'none'; 
+            currentS = id; 
+        }
+
+        function stopAllS() { 
+            if (currentS) { 
+                const ifr = document.getElementById(currentS); 
+                ifr.src = ''; 
+                ifr.previousElementSibling.style.display = 'flex'; 
+                currentS = null; 
+            } 
+        }
+    </script>
+</body>
+</html>
